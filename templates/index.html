@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearest Turbine Locator</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+    <header>
+        <button class="nav-button" id="returnToSurvey">Return to Survey</button>
+        <button class="nav-button" id="faqButton">FAQ</button>
+    </header>
+    <main>
+        <form id="addressForm">
+            <label for="address">Enter Postcode:</label>
+            <input type="text" id="address" placeholder="e.g., G12 4GF" autocomplete="on" required>
+            <button type="submit">Find Nearest Turbine</button>
+        </form>
+        <div id="result"></div>
+        <div id="error" class="error"></div>
+        <div id="map"></div>
+    </main>
+    <div id="faqModal" class="modal">
+        <div class="modal-content">
+            <span id="closeFaq" class="close">&times;</span>
+            <h2>Frequently Asked Questions</h2>
+            <h3>What is this tool for?</h3>
+            <p>
+                This tool calculates the nearest Viking wind turbine based on the address you provide. 
+                It is used as part of a dissertation survey which can be found 
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdf2vF3HfEYnqo94qY4amWoBy1iPjP9cFF6zDT1n4vlXbW9vw/viewform" target="_blank" style="color: #007bff; text-decoration: none;">here</a>.
+            </p>            
+            <h3>Does this store my data?</h3>
+            <p>No user data is collected.</p>
+            <h3>How do I report an error?</h3>
+            <p>Please email Dissertation.Manchester@Gmail.com</p>
+        </div>
+    </div>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
