@@ -17,7 +17,8 @@ import os
 import errorHandler
 
 # -- Load environment variables
-load_dotenv()
+env_path = os.path.join("/home/NoahR/turbineLocator", ".env")
+load_dotenv(dotenv_path=env_path)
 
 # -- Create Flask app
 app = Flask(
@@ -154,7 +155,7 @@ def calculate():
     nearest_turbine = calculate_nearest_turbine(address_coords, turbine_data)
     turbine_id, distance = nearest_turbine
 
-    # -- Get the WGS84 coordinates of the nearest turbine 
+    # -- Get the WGS84 coordinates of the nearest turbine
     try:
         turbine_row = turbine_data.loc[turbine_data["Turbine_ID"] == turbine_id].iloc[0]
         turbine_lat, turbine_lon = turbine_row["Latitude"], turbine_row["Longitude"]
