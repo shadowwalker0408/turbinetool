@@ -5,5 +5,5 @@ pyproj==3.7.0
 python-dotenv==1.0.0
 certifi==2023.7.22
 werkzeug>=2.3.0
-numpy<2.0
+numpy<2.0a
 numexpr>=2.8.4
