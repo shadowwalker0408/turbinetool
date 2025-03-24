@@ -1,4 +1,4 @@
-"" 
+""
   # File:         main.py
   # Author:       Noah Rachel
   # Description:  Handles running of the applications
