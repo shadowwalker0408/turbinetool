@@ -1,99 +1,168 @@
-// -- Initialize the map
-const map = L.map('map').setView([51.505, -0.09], 13);
-
-// -- Add tile layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map);
-
-// -- Add marker function
-function addMarker(lat, lon, label) {
-    const marker = L.marker([lat, lon]).addTo(map);
-    marker.bindPopup(label).openPopup();
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
 }
 
-// -- Draw line between two points
-function drawLine(lat1, lon1, lat2, lon2) {
-    L.polyline([[lat1, lon1], [lat2, lon2]], {
-        color: 'red',
-        weight: 3,
-    }).addTo(map);
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-// -- Form submission logic
-document.getElementById("addressForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+.nav-button {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
 
-    const address = document.getElementById("address").value;
-    const resultDiv = document.getElementById("result");
-    const errorDiv = document.getElementById("error");
+.nav-button:hover {
+    background-color: #555;
+}
 
-    resultDiv.style.display = "none";
-    errorDiv.style.display = "none";
+main {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
 
-    try {
-        const response = await fetch("/calculate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ address }),
-        });
+#error {
+    color: red;
+    display: none;
+    margin-top: 10px;
+}
 
-        const data = await response.json();
+#result {
+    display: none;
+    margin-top: 10px;
+    background-color: #fff;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-        if (!response.ok || data.success === false) {
-            errorDiv.innerHTML = `<p>${data.error}</p>`;
-            errorDiv.style.display = "block";
-        } else {
-            const { latitude, longitude } = data.geocoded_address;
-            const { turbine_id, distance_km, turbine_location } = data;
+#map {
+    height: 300px;
+    width: 100%;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-            // -- Update the results section
-            resultDiv.innerHTML = `
-                <p>Nearest Turbine: <strong>${turbine_id}</strong></p>
-                <p>Distance: <strong>${distance_km}</strong> kilometers</p>
-            `;
-            resultDiv.style.display = "block";
+/* Input Box Styles */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
 
-            // -- Clear existing layers on the map
-            map.eachLayer((layer) => {
-                if (!layer._url) {
-                    map.removeLayer(layer);
-                }
-            });
+form label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
 
-            // -- Center map to user's location
-            map.setView([latitude, longitude], 12);
+form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
 
-            // -- Add markers for the user location and turbine
-            addMarker(latitude, longitude, `Address: ${address}`);
-            addMarker(turbine_location.lat, turbine_location.lon, `Nearest Turbine: ${turbine_id}`);
+form button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
 
-            // -- Draw a line between the user's location and the turbine
-            drawLine(latitude, longitude, turbine_location.lat, turbine_location.lon);
-        }
-    } catch (err) {
-        console.error("Fetch failed:", err);
-        errorDiv.innerHTML = `<p>Something went wrong. Please try again.</p>`;
-        errorDiv.style.display = "block";
+form button:hover {
+    background-color: #218838;
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Ensure it's on top of everything */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scrolling if needed */
+    background-color: rgba(0, 0, 0, 0.8); /* Black background with opacity */
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto; /* Centered */
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%; /* Adjust width as needed */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    color: #333; /* Text color */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.modal h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.modal p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Add fade-in effect */
+.modal-content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
     }
-});
-
-// -- Modal Logic
-document.getElementById("faqButton").addEventListener("click", () => {
-    document.getElementById("faqModal").style.display = "block";
-});
-
-document.getElementById("closeFaq").addEventListener("click", () => {
-    document.getElementById("faqModal").style.display = "none";
-});
-
-window.addEventListener("click", (e) => {
-    if (e.target === document.getElementById("faqModal")) {
-        document.getElementById("faqModal").style.display = "none";
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
-});
-
-// -- Return to survey button
-document.getElementById("returnToSurvey").addEventListener("click", () => {
-    window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSdf2vF3HfEYnqo94qY4amWoBy1iPjP9cFF6zDT1n4vlXbW9vw/viewform";
-});
+}
