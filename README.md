@@ -16,4 +16,4 @@ TURBINE_ID_COLUMN=<collum name>
 
 ## Building / Running
 ### Running
-Please run the main.py file. 
+Please run the src/main.py file. 
