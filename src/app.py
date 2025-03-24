@@ -1,8 +1,8 @@
-"""
+""
     # File:         app.py
     # Author:       Noah Rachel
     # Description:  Core functionality
-"""
+""
 
 # -- Imports
 from flask import Flask, request, render_template, jsonify
